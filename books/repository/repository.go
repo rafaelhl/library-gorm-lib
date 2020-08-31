@@ -31,10 +31,6 @@ func (r BooksRepository) InsertBook(ctx context.Context, book books.Book) error 
 			return err
 		}
 
-		if err := tx.WithContext(ctx).Model(&book.BookShelf).UpdateColumn("amount", len(book.BookShelf.Books)+1).Error; err != nil {
-			return err
-		}
-
 		return nil
 	})
 }

@@ -38,3 +38,14 @@ func (Book) TableName() string {
 func (Shelf) TableName() string {
 	return "shelf"
 }
+
+func (book *Book) AfterCreate(tx *gorm.DB) error {
+	if book.BookShelf.ID == 0 {
+		return nil
+	}
+
+	if err := tx.Model(&book.BookShelf).UpdateColumn("amount", len(book.BookShelf.Books)+1).Error; err != nil {
+		return err
+	}
+	return nil
+}
