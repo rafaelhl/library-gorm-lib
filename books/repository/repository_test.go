@@ -90,6 +90,27 @@ func TestBooksRepository_InsertBook(t *testing.T) {
 	assert.Equal(t, book, b)
 }
 
+func TestBooksRepository_FindBookByID(t *testing.T) {
+	dbFile := fmt.Sprintf(testDB, "find-book")
+	db := buildTestDB(dbFile)
+	defer os.Remove(dbFile)
+
+	shelf := createShelf(db)
+
+	repo := repository.New(db)
+	book := shelf.Books[0]
+	b, err := repo.FindBookByID(context.Background(), book.ID)
+
+	assert.NoError(t, err)
+	cleanBookTime(&b)
+	cleanShelfTime(&b.BookShelf)
+	cleanBookTime(&book)
+	cleanShelfTime(&shelf)
+	shelf.Books = nil
+	book.BookShelf = shelf
+	assert.Equal(t, book, b)
+}
+
 func createShelf(db *gorm.DB) books.Shelf {
 	shelfTest := shelf
 	db.Create(&shelfTest)

@@ -34,3 +34,8 @@ func (r BooksRepository) InsertBook(ctx context.Context, book books.Book) error 
 		return nil
 	})
 }
+
+func (r BooksRepository) FindBookByID(ctx context.Context, bookID uint) (book books.Book, err error) {
+	err = r.db.WithContext(ctx).Preload("BookShelf").First(&book, bookID).Error
+	return
+}
