@@ -49,3 +49,8 @@ func (r BooksRepository) UpdateBook(ctx context.Context, book books.Book) (err e
 	}).Error
 	return
 }
+
+func (r BooksRepository) FindAllBooks(ctx context.Context) (books []books.Book, err error) {
+	err = r.db.WithContext(ctx).Preload(clause.Associations).Find(&books).Error
+	return
+}

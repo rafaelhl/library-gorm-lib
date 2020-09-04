@@ -135,6 +135,29 @@ func TestBooksRepository_UpdateBook(t *testing.T) {
 	assert.Equal(t, book, storedBook)
 }
 
+func TestBooksRepository_FindAllBooks(t *testing.T) {
+	dbFile := fmt.Sprintf(testDB, "find-all-books")
+	db := buildTestDB(dbFile)
+	defer os.Remove(dbFile)
+
+	shelf := createShelf(db)
+
+	repo := repository.New(db)
+
+	allBooks, err := repo.FindAllBooks(context.Background())
+
+	assert.NoError(t, err)
+	cleanShelfTime(&shelf)
+	cleanBooksTime(allBooks)
+	shelfBooks := make([]books.Book, len(shelf.Books))
+	for i, b := range shelf.Books {
+		b.BookShelf = shelf
+		b.BookShelf.Books = nil
+		shelfBooks[i] = b
+	}
+	assert.Equal(t, shelfBooks, allBooks)
+}
+
 func createShelf(db *gorm.DB) books.Shelf {
 	shelfTest := shelf
 	db.Create(&shelfTest)
