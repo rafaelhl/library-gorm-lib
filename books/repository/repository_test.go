@@ -111,6 +111,30 @@ func TestBooksRepository_FindBookByID(t *testing.T) {
 	assert.Equal(t, book, b)
 }
 
+func TestBooksRepository_UpdateBook(t *testing.T) {
+	dbFile := fmt.Sprintf(testDB, "update-book")
+	db := buildTestDB(dbFile)
+	defer os.Remove(dbFile)
+
+	shelf := createShelf(db)
+
+	repo := repository.New(db)
+	book := shelf.Books[0]
+	book.Edition = 2
+	book.Author = "Anonymous"
+	err := repo.UpdateBook(context.Background(), book)
+
+	assert.NoError(t, err)
+
+	var storedBook books.Book
+	err = db.First(&storedBook, book.ID).Error
+	assert.NoError(t, err)
+
+	cleanBookTime(&book)
+	cleanBookTime(&storedBook)
+	assert.Equal(t, book, storedBook)
+}
+
 func createShelf(db *gorm.DB) books.Shelf {
 	shelfTest := shelf
 	db.Create(&shelfTest)

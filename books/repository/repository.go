@@ -39,3 +39,13 @@ func (r BooksRepository) FindBookByID(ctx context.Context, bookID uint) (book bo
 	err = r.db.WithContext(ctx).Preload("BookShelf").First(&book, bookID).Error
 	return
 }
+
+func (r BooksRepository) UpdateBook(ctx context.Context, book books.Book) (err error) {
+	err = r.db.WithContext(ctx).Model(&book).Updates(map[string]interface{}{
+		"title":       book.Title,
+		"description": book.Description,
+		"author":      book.Author,
+		"edition":     book.Edition,
+	}).Error
+	return
+}

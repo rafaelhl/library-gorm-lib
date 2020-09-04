@@ -12,8 +12,10 @@ import (
 
 	"github.com/rafaelhl/library-gorm-lib/books/bookfinder"
 	"github.com/rafaelhl/library-gorm-lib/books/booksinserter"
+	"github.com/rafaelhl/library-gorm-lib/books/bookupdater"
 	"github.com/rafaelhl/library-gorm-lib/books/handler/bookfind"
 	"github.com/rafaelhl/library-gorm-lib/books/handler/bookinsert"
+	"github.com/rafaelhl/library-gorm-lib/books/handler/bookupdate"
 	"github.com/rafaelhl/library-gorm-lib/books/repository"
 )
 
@@ -37,6 +39,7 @@ func main() {
 
 	router.Method(http.MethodPost, "/books", bookinsert.NewHandler(booksinserter.New(repository, repository)))
 	router.Method(http.MethodGet, "/books/{bookID}", bookfind.NewHandler(bookfinder.New(repository)))
+	router.Method(http.MethodPut, "/books/{bookID}", bookupdate.NewHandler(bookupdater.New(repository)))
 
 	err = http.ListenAndServe(":8080", router)
 	if err != nil {
