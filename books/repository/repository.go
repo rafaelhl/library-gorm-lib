@@ -54,3 +54,8 @@ func (r BooksRepository) FindAllBooks(ctx context.Context) (books []books.Book, 
 	err = r.db.WithContext(ctx).Preload(clause.Associations).Find(&books).Error
 	return
 }
+
+func (r BooksRepository) DeleteBook(ctx context.Context, book books.Book) (err error) {
+	err = r.db.WithContext(ctx).Delete(book).Error
+	return
+}

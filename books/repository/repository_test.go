@@ -158,6 +158,25 @@ func TestBooksRepository_FindAllBooks(t *testing.T) {
 	assert.Equal(t, shelfBooks, allBooks)
 }
 
+func TestBooksRepository_DeleteBook(t *testing.T) {
+	dbFile := fmt.Sprintf(testDB, "delete-book")
+	db := buildTestDB(dbFile)
+	defer os.Remove(dbFile)
+
+	shelf := createShelf(db)
+
+	repo := repository.New(db)
+	ctx := context.Background()
+	book, _ := repo.FindBookByID(ctx, shelf.Books[0].ID)
+
+	err := repo.DeleteBook(ctx, book)
+
+	assert.NoError(t, err)
+	var deletedBook books.Book
+	db.Unscoped().Find(&deletedBook, book.ID)
+	assert.NotNil(t, deletedBook.DeletedAt)
+}
+
 func createShelf(db *gorm.DB) books.Shelf {
 	shelfTest := shelf
 	db.Create(&shelfTest)
